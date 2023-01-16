@@ -3,7 +3,7 @@
 
 //✔DONE FRASE QUE INDIQUE QUE EMPIEZA EL JUEGO.
 //✔DONE MOSTRAR DOS TABLEROS, DE JUGADOR A Y JUGADOR B. RELLENOS DE 'VACIO'.
-//TODO CREAR CLASES Y/O OBJETOS BARCOS. PUNTOS DE VIDA DEL BARCO, IDENTIFICACIÓN DE CADA BARCO. EL OBJETO TIENE QUE SABER EN QUE POSICIONES ESTA DENTRO DEL TABLERO (PROPIEDAD X,Y EN CADA CASILLA, SI SON DOS CASILLAS X,Y EN EL TABLERO, SERÍAN DOS VECTORES (PARTES DEL BARCO) CON DOS VALORES CADA UNO (POSICIÓN EN EL TABLERO). )
+//✔DONE CREAR CLASES Y/O OBJETOS BARCOS. PUNTOS DE VIDA DEL BARCO, IDENTIFICACIÓN DE CADA BARCO. EL OBJETO TIENE QUE SABER EN QUE POSICIONES ESTA DENTRO DEL TABLERO (PROPIEDAD X,Y EN CADA CASILLA, SI SON DOS CASILLAS X,Y EN EL TABLERO, SERÍAN DOS VECTORES (PARTES DEL BARCO) CON DOS VALORES CADA UNO (POSICIÓN EN EL TABLERO). )
 //TODO FUNCIÓN ALEATORIA COLOCAR LAS NAVES EN TABLERO DE JUGADOR A Y B (CREAR OBJETO BARCO Y MARCAR SU POSICION EN LA FUNCIÓN). DEBE DECIDIR SI SE COLOCA HORIZONTAL O VERTICAL, NUNCA DIAGONAL. NO SOLAPAR BARCOS.
 //TODO Intentar colocar primero los barcos más grandes primero. Empezar por las mayores hasta llegar a la arenilla.
 //TODO TABLERO ENEMIGO DEBE MOSTRARSE COMO VACIO ENTERO AL COMIENZO CON AGUA O TOCADO EN EL DISPARO, SIN BARCOS.
@@ -61,35 +61,22 @@ class Board {
         //we build an array inside the object
         this.array =
         [
-            ['','','','','','','','','',''],
-            ['','','','','','','','','',''],
-            ['','','','','','','','','',''],
-            ['','','','','','','','','',''],
-            ['','','','','','','','','',''],
-            ['','','','','','','','','',''],
-            ['','','','','','','','','',''],
-            ['','','','','','','','','',''],
-            ['','','','','','','','','',''],
-            ['','','','','','','','','',''],
+            [0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0],
         ]
         //this.player
         //this.boardtype= BoardType
     
     }
     
-} 
-
-//We build Player class, which will build 2 objects, the player's own and enemy board.
-class Player {
-    constructor(name){
-        this.name = name
-        //Given the fact every player sees 2 boards per run, we create them inside the player object.
-        this.OwnBoard = new Board()
-        this.EnemyBoard = new Board()
-
-    }
-
-
 } 
 
 class Boat {
@@ -101,12 +88,35 @@ class Boat {
     }
 }
 
-//Function that, when called, sets up everything to start the game
-function SetupGame() {
+//We build Player class, which will build 2 objects, the player's own and enemy board.
+class Player {
+    constructor(name){
+        this.name = name
+        //Given the fact every player sees 2 boards per run, we create them inside the player object.
+        this.OwnBoard = new Board()
+        this.EnemyBoard = new Board()
+        
+        this.Carrier = new Boat("carrier",5,5)
+
+
+    }
+
+
+} 
+
+function PlaceBoat (){
+    console.log ("PRUEBO FUNCION PLACEBOAT")
+    for(let i = 0; i <10; i++) {
+        for(let j = 0; j <10; j++) {
+            //console.log(Player1.OwnBoard.array[0][1])
+        }
+    }
+}
+
+//we initialize the game
     //console.table(MainBoard.Array)
     const Player1 = new Player("Player 1")
     const Player2 = new Player("Player 2")
-    const Submarine = new Boat("submarine")
 
     console.log("THE GAME STARTS!")
     console.log(Player1.name +" OWN BOARD")
@@ -119,9 +129,8 @@ function SetupGame() {
     console.log(Player2.name +" ENEMYBOARD")
     console.table(Player2.EnemyBoard.array)
 
-    console.log(Submarine.length)
-    
-}
+    console.log(Player1.Carrier.type)
+    console.log(Player1.OwnBoard.array[0][1])
 
-//we initialize the game
-SetupGame();
+
+//PlaceBoat();
