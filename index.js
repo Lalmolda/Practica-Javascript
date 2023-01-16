@@ -54,6 +54,7 @@
 //We build board class
 class Board {
     constructor(){
+        //we build an array inside the object
         this.array =
         [
             ['','','','','','','','','',''],
@@ -74,10 +75,11 @@ class Board {
     
 } 
 
-//We build Player class
+//We build Player class, which will build 2 objects, the player's own and enemy board.
 class Player {
     constructor(name){
         this.name = name;
+        //Given the fact every player sees 2 boards per run, we create them inside the player object.
         this.OwnBoard = new Board()
         this.EnemyBoard = new Board()
     }
@@ -85,15 +87,24 @@ class Player {
 
 } 
 
+//Function that, when called, sets up everything to start the game
 function SetupGame() {
     //console.table(MainBoard.Array)
     const Player1 = new Player("Player 1")
     const Player2 = new Player("Player 2")
-    console.log(Player1.name +" own board")
+
+    console.log("THE GAME STARTS!")
+    console.log(Player1.name +" OWN BOARD")
     console.table(Player1.OwnBoard.array)
-    console.log(Player1.name +" enemy board")
+    console.log(Player1.name +" ENEMYBOARD")
     console.table(Player1.EnemyBoard.array)
+
+    console.log(Player2.name +" OWN BOARD")
+    console.table(Player2.OwnBoard.array)
+    console.log(Player2.name +" ENEMYBOARD")
+    console.table(Player2.EnemyBoard.array)
     
 }
 
+//we initialize the game
 SetupGame();
