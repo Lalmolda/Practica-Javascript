@@ -50,9 +50,11 @@
                     //si todas naves hundida
                         //basta jugador 1
 
+
+//We build board class
 class Board {
     constructor(){
-        this.BoardArray =
+        this.array =
         [
             ['','','','','','','','','',''],
             ['','','','','','','','','',''],
@@ -65,13 +67,33 @@ class Board {
             ['','','','','','','','','',''],
             ['','','','','','','','','',''],
         ]
+        //this.player
+        //this.boardtype= BoardType
     
     }
     
 } 
-const BoardPlayer1 = new Board()
-console.table(BoardPlayer1.BoardArray)
+
+//We build Player class
+class Player {
+    constructor(name){
+        this.name = name;
+        this.OwnBoard = new Board()
+        this.EnemyBoard = new Board()
+    }
 
 
+} 
 
+function SetupGame() {
+    //console.table(MainBoard.Array)
+    const Player1 = new Player("Player 1")
+    const Player2 = new Player("Player 2")
+    console.log(Player1.name +" own board")
+    console.table(Player1.OwnBoard.array)
+    console.log(Player1.name +" enemy board")
+    console.table(Player1.EnemyBoard.array)
+    
+}
 
+SetupGame();
