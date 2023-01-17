@@ -14,13 +14,31 @@ const indexedTable = {
 //let indexOfTable = 'A'
 //console.log(indexedTable.A[0] === indexedTable[indexOfTable][0])
 console.table(indexedTable)
+console.log(indexedTable[2])
 // para "recorrer" un objeto:
 //Object.keys(indexedTable).forEach(key => {
 //    console.log(indexedTable[key])
 //})
+let RandomRow=0
+let RandomColumn=1
+let columnaAleatoria = []
+columnaAleatoria=Object.keys(indexedTable)[RandomRow] //PASAMOS INDICE DE VECTOR ROW A COLUMNAALEATORIA
+console.log("ROW ALEATORIA ES  "+columnaAleatoria)///PONER I ALEATORIA Y TENEMOS ROW ALEATORIA
+for(let index in indexedTable){
+    console.log("A es IGUAL a "+Object.keys(indexedTable)[RandomRow]) //HACEMOS QUE SOLO MUEVA FILA ALEATORIA
+    if (index==columnaAleatoria){
+            console.log("ENTRO EN CONDICIONANTE PA CAMBIAR BUCLE y PRINTO ROW "+indexedTable[index])//ESCOJO ROW QUE QUIERO CON RANDOMROW Y LO ANTERIOR!!
+        }
+}
+console.log("ELEMENTO 2 de la row aleatoria" +columnaAleatoria[RandomRow]) //no funciona, habrá que cargar con un bucle al vector columnaAleatoria
+console.log("DEBAJO COLUMNA ALEATORIA!! "+RandomColumn)
+for (let key in indexedTable){
+    ///POSIBLE MANIPULACION DE KEY PARA FILA ALEATORIA CON RANDOM, MIRAR MAÑANA, HACER CONSOLE.LOG AHORA
+    console.log("KEY ES"+key)
+    console.log(indexedTable[key][RandomColumn]) //TENEMOS COLUMNA ALEATORIA!!
+}
 
-console.log("AQUI EMPIEZO "+Object.keys(indexedTable)[2])
-
+console.log("-------------------------------")
 for (Object.keys in indexedTable){
     console.log(indexedTable[Object.keys])
 }

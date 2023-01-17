@@ -52,25 +52,28 @@
 
 
 
-const BoatPicture = '🚢'
-const Damaged = '🔥'
-const Water = '💧'
+const BOATPICTURE = '🚢'
+const DAMAGED = '🔥'
+const WATER = '💧'
+const ROWS = 10
+const COLUMNS = 10
 //We build board class
-class Board {
+class board {
     constructor(){
         //we build an array inside the object
-        this.array =
-        {
-          A: [' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
-          B: [' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
-          C: [' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
-          D: [' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
-          E: [' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
-          F: [' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
-          G: [' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
-          H: [' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
-          I: [' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
-          J: [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ']
+        //this.array = []
+        this.array = {
+        
+          A: ['  ','  ','  ','  ','  ','  ','  ','  ','  ','  '],
+          B: ['  ','  ','  ','  ','  ','  ','  ','  ','  ','  '],
+          C: ['  ','  ','  ','  ','  ','  ','  ','  ','  ','  '],
+          D: ['  ','  ','  ','  ','  ','  ','  ','  ','  ','  '],
+          E: ['  ','  ','  ','  ','  ','  ','  ','  ','  ','  '],
+          F: ['  ','  ','  ','  ','  ','  ','  ','  ','  ','  '],
+          G: ['  ','  ','  ','  ','  ','  ','  ','  ','  ','  '],
+          H: ['  ','  ','  ','  ','  ','  ','  ','  ','  ','  '],
+          I: ['  ','  ','  ','  ','  ','  ','  ','  ','  ','  '],
+          J: ['  ','  ','  ','  ','  ','  ','  ','  ','  ','  '],
         }
         //this.player
         //this.boardtype= BoardType
@@ -79,24 +82,24 @@ class Board {
     
 } 
 
-class Boat {
-    constructor (type, length, lives, position){
+class boat {
+    constructor (type, size, lives, position){
         this.type = type //which type of boat, i.e submarine
-        this.length = length //number of boxes in the board
+        this.size = size //number of boxes in the board
         this.lives = lives //remaining lives
         this.position  = []
     }
 }
 
 //We build Player class, which will build 2 objects, the player's own and enemy board.
-class Player {
+class player {
     constructor(name){
         this.name = name
         //Given the fact every player sees 2 boards per run, we create them inside the player object.
-        this.OwnBoard = new Board()
-        this.EnemyBoard = new Board()
+        this.ownBoard = new board()
+        this.enemyBoard = new board()
         
-        this.Carrier = new Boat("carrier",5,5)
+        this.carrier = new boat("carrier",5,5)
 
 
     }
@@ -104,32 +107,42 @@ class Player {
 
 } 
 
-function PlaceBoat (){
+//Places boats on the board
+function placeBoat (){
     console.log ("PRUEBO FUNCION PLACEBOAT")
-    for(let i = 0; i <10; i++) {
-        for(let j = 0; j <10; j++) {
-            //console.log(Player1.OwnBoard.array[0][1])
+    console.log(player1.carrier)
+    //place carrier in Player1.ownBoard.Array
+    //For bucles which go through each element of the matrix/array of arrays.
+    let randomRow
+    let randomColumn
+    let horizontalOrVertical
+
+    for (let index in player1.ownBoard.array){
+        for(let j= 0;j<player1.ownBoard.array[index].length;j++){
+            console.log(player1.ownBoard.array[index][j])
+            //if(player1.ownBoard.array[index][j]=='  '){        //remember equal to double space, not single space
+                //player1.ownBoard.array[index][j]=BOATPICTURE  //changes empty spaces for boats
+            //}
         }
     }
+    console.table(player1.ownBoard.array)
 }
 
 //we initialize the game
     //console.table(MainBoard.Array)
-    const Player1 = new Player("Player 1")
-    const Player2 = new Player("Player 2")
+    const player1 = new player("player 1")
+    const player2 = new player("player 2")
 
     console.log("THE GAME STARTS!")
-    console.log(Player1.name +" OWN BOARD")
-    console.table(Player1.OwnBoard.array)
-    console.log(Player1.name +" ENEMYBOARD")
-    console.table(Player1.EnemyBoard.array)
+    console.log(player1.name +" OWN BOARD")
+    console.table(player1.ownBoard.array)
+    console.log(player1.name +" enemyBoard")
+    console.table(player1.enemyBoard.array)
 
-    console.log(Player2.name +" OWN BOARD")
-    console.table(Player2.OwnBoard.array)
-    console.log(Player2.name +" ENEMYBOARD")
-    console.table(Player2.EnemyBoard.array)
-
-    console.log(Player1.Carrier.type)
+    console.log(player2.name +" OWN BOARD")
+    console.table(player2.ownBoard.array)
+    console.log(player2.name +" enemyBoard")
+    console.table(player2.enemyBoard.array)
 
 
-//PlaceBoat();
+    placeBoat();
