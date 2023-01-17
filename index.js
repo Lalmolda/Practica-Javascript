@@ -144,31 +144,26 @@ function getRandomInt(max) {
 
 
 //Places boats on the board
-function placeBoat (boat, board){ //le podria pasar el board del player
-    console.log ("PRUEBO FUNCION PLACEBOAT")
+function placeBoat (boat, board){ //receives player object with both boat and board.
     //place carrier in board
     let randomRowNum
-    randomRowNum=getRandomInt(10)  //generates random number to place a bot in a determined row
-    console.log("SI EXISTO VALGO "+randomRowNum) 
-    RandomRowValue=Object.keys(board)[randomRowNum]
-    console.log("SOY RANDOMROWVALUE Y VALGO "+RandomRowValue)
-    let randomColumn
-    randomColumn=getRandomInt(10)  
-    console.log("RANDOM COLUMN ES "+randomColumn)
+    let randomColumn  
     let horizontalOrVertical
-    horizontalOrVertical=getRandomInt(2)
-    console.log("HORIZONTAL OR VERTICAL ES  "+horizontalOrVertical)
     let sizeBoat=boat.size //to avoid size becoming 0, as it will be used as a counter, we save size value in sizeBoat and viceversa.
-    
+    let retry=true
 
-    if (horizontalOrVertical==0){
+while(retry){//Bucle which will keep trying to position the boats until finished
+    horizontalOrVertical=getRandomInt(2)
+    randomRowNum=getRandomInt(10)  //generates random number to place a boat in a determined row
+    RandomRowValue=Object.keys(board)[randomRowNum]
+    randomColumn=getRandomInt(10)
+
+    if (horizontalOrVertical==0){ //SI CASILLA COLUMNA -1 ES == A '  ' VACIO CON DOS ESPACIOS && CASILLA COLUMNA ACTUAL == '  '
     //Bucle which will place a boat in a determined column
         for(let index in board){
-            console.log("entre en acum "+sizeBoat+" veces") 
                 if(sizeBoat!=0){//if there are still missing parts to print of the boat size, sizeBoat will be >0
-                    console.log("ENTRO EN EL BUCLE INDEX VALE "+index+" Y randomcolumn VALE "+randomColumn)
-                    console.log(board[index])
-                    board[index][randomColumn]=boat.boatPicture       
+                    board[index][randomColumn]=boat.boatPicture
+                    retry=false       
                 }        
                 else{//if size is 0, the boat placement has concluded
                     sizeBoat=boat.size//we reset sizeBoat size to the correct one
@@ -182,25 +177,25 @@ function placeBoat (boat, board){ //le podria pasar el board del player
             if(index==RandomRowValue){
                 for(let j= 0;j<sizeBoat;j++){//we print as many parts of the boat as the size of the boat
                     board[index][j]=boat.boatPicture 
+                    retry=false
                 }
             }    //console.log(board[index][randomColumn])
         }
     }
-    
+}
     //for(let index in board){
         //board[index][randomColumn]=boat.boatPicture
            //console.log(board[index][randomColumn])
     //}
-    console.log("SIZE AKI SIGUE VALIENDO "+boat.size)
     //For bucles which go through each element of the matrix/array of arrays.
-    for (let index in board){
-        for(let j= 0;j<board[index].length;j++){
-            console.log(board[index][j])
+    //for (let index in board){
+        //for(let j= 0;j<board[index].length;j++){
+            //console.log(board[index][j])
             //if(board[index][j]=='  '){        //remember equal to double space, not single space
                 //board[index][j]=boatPicture  //changes empty spaces for boats
             //}
-        }
-    }
+        //}
+    //}
     console.table(board)
 }
 
