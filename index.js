@@ -107,16 +107,65 @@ class player {
 
 } 
 
+//returns a random number which equals the parameter max-1 (if its 8, it will generate random numbers between 0 and 7)
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+  }
+
+
+
 //Places boats on the board
-function placeBoat (){
+function placeBoat (size){
     console.log ("PRUEBO FUNCION PLACEBOAT")
     console.log(player1.carrier)
     //place carrier in Player1.ownBoard.Array
-    //For bucles which go through each element of the matrix/array of arrays.
-    let randomRow
+    
+    let randomRowNum
+    randomRowNum=getRandomInt(10)  //generates random number to place a bot in a determined row
+    console.log("SI EXISTO VALGO "+randomRowNum) 
+    RandomRowValue=Object.keys(player1.ownBoard.array)[randomRowNum]
+    console.log("SOY RANDOMROWVALUE Y VALGO "+RandomRowValue)
     let randomColumn
+    randomColumn=getRandomInt(10)  
+    console.log("RANDOM COLUMN ES "+randomColumn)
     let horizontalOrVertical
+    horizontalOrVertical=getRandomInt(2)
+    console.log("HORIZONTAL OR VERTICAL ES  "+horizontalOrVertical)
+    let sizeBoat=size //to avoid size becoming 0, as it will be used as a counter, we save size value in sizeBoat and viceversa.
+    
 
+    if (horizontalOrVertical==0){
+    //Bucle which will place a boat in a determined column
+        for(let index in player1.ownBoard.array){
+            console.log("entre en acum "+sizeBoat+" veces") 
+                if(sizeBoat!=0){//if there are still missing parts to print of the boat size, sizeBoat will be >0
+                    console.log("ENTRO EN EL BUCLE INDEX VALE "+index+" Y randomcolumn VALE "+randomColumn)
+                    console.log(player1.ownBoard.array[index])
+                    player1.ownBoard.array[index][randomColumn]=BOATPICTURE       
+                }        
+                else{//if size is 0, the boat placement has concluded
+                    sizeBoat=size//we reset sizeBoat size to the correct one
+                    break;
+                }
+            sizeBoat--    
+        }
+    }else{
+    //Bucle which will place a boat in a determined row
+        for(let index in player1.ownBoard.array){
+            if(index==RandomRowValue){
+                for(let j= 0;j<sizeBoat;j++){//we print as many parts of the boat as the size of the boat
+                    player1.ownBoard.array[index][j]=BOATPICTURE
+                }
+            }    //console.log(player1.ownBoard.array[index][randomColumn])
+        }
+    }
+    
+    //for(let index in player1.ownBoard.array){
+        //player1.ownBoard.array[index][randomColumn]=BOATPICTURE
+           //console.log(player1.ownBoard.array[index][randomColumn])
+    //}
+    console.log("SIZE AKI SIGUE VALIENDO "+size)
+    //For bucles which go through each element of the matrix/array of arrays.
     for (let index in player1.ownBoard.array){
         for(let j= 0;j<player1.ownBoard.array[index].length;j++){
             console.log(player1.ownBoard.array[index][j])
@@ -127,6 +176,9 @@ function placeBoat (){
     }
     console.table(player1.ownBoard.array)
 }
+
+
+
 
 //we initialize the game
     //console.table(MainBoard.Array)
@@ -145,4 +197,4 @@ function placeBoat (){
     console.table(player2.enemyBoard.array)
 
 
-    placeBoat();
+    placeBoat(player1.carrier.size)
