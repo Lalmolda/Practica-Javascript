@@ -150,39 +150,92 @@ function placeBoat (boat, board){ //receives player object with both boat and bo
     let randomColumn  
     let horizontalOrVertical
     let sizeBoat=boat.size //to avoid size becoming 0, as it will be used as a counter, we save size value in sizeBoat and viceversa.
-    let retry=true
-
-while(retry){//Bucle which will keep trying to position the boats until finished
+    let retry=1
     horizontalOrVertical=getRandomInt(2)
-    randomRowNum=getRandomInt(10)  //generates random number to place a boat in a determined row
-    RandomRowValue=Object.keys(board)[randomRowNum]
-    randomColumn=getRandomInt(10)
+//while(retry){//Bucle which will keep trying to position the boats until finished
+    
+    let isSpace=false
 
     if (horizontalOrVertical==0){ //SI CASILLA COLUMNA -1 ES == A '  ' VACIO CON DOS ESPACIOS && CASILLA COLUMNA ACTUAL == '  '
     //Bucle which will place a boat in a determined column
+        while(retry>0){//while there is one boat or more on the matrix position we are trying to place the boat, the bucle will look for alternative positions.
+            retry=0
+            console.log("ENTRO EN EL BUCLE Y HAGO RETRY, SALIERON MAL LAS COSAS")
+            randomColumn=getRandomInt(10)
+            sizeBoat=boat.size
+            for(let index in board){//Bucle that checks that the next X vector components are equal to '  '(empty), where X is the size of the boat.
+                if(sizeBoat>0){
+                    console.log("SOY BARCO "+boat.type+" y SIZEBOAT VALE"+sizeBoat)
+                    if(board[index][randomColumn]!='  '){
+                        console.log("DETECTO CASILLA CON BARCO REPITO SOY BARCO "+boat.type+" y ESTOY EN INDEX= "+index+" Y columna =  "+randomColumn)
+                        retry++ //if there is only one boat in the same cell of the matriz, it is counted and bucle repeats.
+                    //console.log("DETECTO CASILLA CON BARCO, REPITO")
+                    }
+                    else{
+                        //retry=false
+                    }
+                }
+            console.log("RETRY VALE "+retry)
+            sizeBoat--
+            console.log("REDUZCO SIZEBOAT")
+            }
+        console.log("VALOR DE RETRY"+retry)
+        }
+        sizeBoat=boat.size
         for(let index in board){
-                if(sizeBoat!=0){//if there are still missing parts to print of the boat size, sizeBoat will be >0
+            if(sizeBoat>0){//if there are still missing parts to print of the boat size, sizeBoat will be >0
+                    //if(board[index][randomColumn]=='  '){ ///BUCLE PARA COMPROBAR RANDOMCOLUMN+BOAT.SIZE ANTES DE EMPEZAR! PONER OTRO CONDICIONANTE COMO RETRY PARA ENTRAR A EMPEZAR
                     board[index][randomColumn]=boat.boatPicture
-                    retry=false       
-                }        
-                else{//if size is 0, the boat placement has concluded
+                        //retry=false
+                    //}else{
+                    console.log("PRINTING: SOY BARCO "+boat.type+" y ESTOY EN INDEX= "+index+" Y columna =  "+randomColumn)
+
+                    //console.log("SOY BARCO "+boat.type+" y HE ENTRADO EN RETRY!!") //CUANDO ENTRA EN RETRY HAY QUE MIRAR COMO HACER QUE BORRE LO QUE YA HA ESCRITO
+                        //retry=true
+                    //}       
+                }else{//if size is 0, the boat placement has concluded
+                //console.log("ENTRO AUQI!!!!43123423423")
                     sizeBoat=boat.size//we reset sizeBoat size to the correct one
                     break;
                 }
-            sizeBoat--    
+            console.log("SIZEBOAT VALOR AL PRINTING!!"+sizeBoat)
+            sizeBoat--  
         }
+        
     }else{
+        while(retry>0){
+            retry=0
+            randomRowNum=getRandomInt(10)  //generates random number to place a boat in a determined row
+            randomRowValue=Object.keys(board)[randomRowNum]
+            for(let index in board){
+                if(index==randomRowValue){
+                    for(let j= 0;j<sizeBoat;j++){//we print as many parts of the boat as the size of the boat
+                        if(board[index][j]!='  '){  //COMPROBAR SI CASILLA ESTAN LIBRES EN J SUMANDO A J BOAT.SIZE (J+BOAT.SIZE) EN BUCLE
+                            console.log("DETECTO CASILLA CON BARCO, REPITO")
+                            retry++
+                        }
+                    }
+                }
+            }  //  
+        }
+
+         
     //Bucle which will place a boat in a determined row
         for(let index in board){
-            if(index==RandomRowValue){
+            if(index==randomRowValue){
                 for(let j= 0;j<sizeBoat;j++){//we print as many parts of the boat as the size of the boat
-                    board[index][j]=boat.boatPicture 
-                    retry=false
+                    console.log("SOY BARCO ROW "+boat.type+" y ESTOY2 EN INDEX="+index+" Y columna =  "+j)
+                    if(board[index][j]=='  '){  //COMPROBAR SI CASILLA ESTAN LIBRES EN J SUMANDO A J BOAT.SIZE (J+BOAT.SIZE) EN BUCLE
+                        board[index][j]=boat.boatPicture 
+                    }else{
+                        //console.log("SOY BARCO "+boat.type+" y HE ENTRADO EN RETRY!!")
+                        //retry=true
+                    }
                 }
             }    //console.log(board[index][randomColumn])
         }
     }
-}
+//}
     //for(let index in board){
         //board[index][randomColumn]=boat.boatPicture
            //console.log(board[index][randomColumn])
@@ -225,10 +278,10 @@ while(retry){//Bucle which will keep trying to position the boats until finished
     placeBoat(player1.submarine1, player1.ownBoard.array)
     placeBoat(player1.submarine2, player1.ownBoard.array)
 
-    //placeBoat(player1.cruise1, player1.ownBoard.array)
-    //placeBoat(player1.cruise2, player1.ownBoard.array)
-    //placeBoat(player1.cruise3, player1.ownBoard.array)
+    placeBoat(player1.cruise1, player1.ownBoard.array)
+    placeBoat(player1.cruise2, player1.ownBoard.array)
+    placeBoat(player1.cruise3, player1.ownBoard.array)
 
-    //placeBoat(player1.motorboat1, player1.ownBoard.array)
-    //placeBoat(player1.motorboat2, player1.ownBoard.array)
-    //placeBoat(player1.motorboat3, player1.ownBoard.array)
+    placeBoat(player1.motorboat1, player1.ownBoard.array)
+    placeBoat(player1.motorboat2, player1.ownBoard.array)
+    placeBoat(player1.motorboat3, player1.ownBoard.array)
