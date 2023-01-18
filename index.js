@@ -6,7 +6,7 @@
 //✔DONE CREAR CLASES Y/O OBJETOS BARCOS. PUNTOS DE VIDA DEL BARCO, IDENTIFICACIÓN DE CADA BARCO. EL OBJETO TIENE QUE SABER EN QUE POSICIONES ESTA DENTRO DEL TABLERO (PROPIEDAD X,Y EN CADA CASILLA, SI SON DOS CASILLAS X,Y EN EL TABLERO, SERÍAN DOS VECTORES (PARTES DEL BARCO) CON DOS VALORES CADA UNO (POSICIÓN EN EL TABLERO). )
 //✔DONE FUNCIÓN ALEATORIA COLOCAR LAS NAVES EN TABLERO DE JUGADOR A Y B (CREAR OBJETO BARCO Y MARCAR SU POSICION EN LA FUNCIÓN). DEBE DECIDIR SI SE COLOCA HORIZONTAL O VERTICAL, NUNCA DIAGONAL. NO SOLAPAR BARCOS.
 //✔DONE Intentar colocar primero los barcos más grandes primero. Empezar por las mayores hasta llegar a la arenilla.
-//TODO TABLERO ENEMIGO DEBE MOSTRARSE COMO VACIO ENTERO AL COMIENZO CON AGUA O TOCADO EN EL DISPARO, SIN BARCOS.
+//✔DONE TABLERO ENEMIGO DEBE MOSTRARSE COMO VACIO ENTERO AL COMIENZO CON AGUA O TOCADO EN EL DISPARO, SIN BARCOS.
 //TODO FRASE QUE INDICA QUE EMPIEZAN LAS RONDAS.
 //TODO MOSTRAR EN QUE RONDA ESTAMOS POR Y QUE JUGADOR ESTÁ JUGANDO.
 //TODO FUNCIÓN DISPARO (NO PODER DISPARAR EN LA MISMA CASILLA DOS VECES), FUNCIÓN PARA MOSTRAR AGUA O TOCADO EN EL ENEMY BOARD.Cada disparo, mostrará la casilla seleccionada, los disparos le faltan al jugador X.
@@ -122,7 +122,10 @@ class player {
         this.enemyBoard = new board()
 
         this.shots=100
-        
+        this.shotPositions = []
+
+        this.boatPositionsArray = [] //crear vector de objetos de todos los barcos para ir comprobando sus posiciones y si están hundidos
+
         this.carrier = new boat("carrier",5,5)
         this.vessel = new boat("vessel",4,4)
         this.submarine1 = new boat("submarine",3,3)
@@ -140,15 +143,21 @@ class player {
         let shipDamaged =false //becomes true if we damage a ship in other player's own board, so we can also indicate we damaged a ship in our enemy board.
         let randomColumn 
         let randomRowNum
+        let MIXTURE
         randomRowNum =getRandomInt(10) //random row number
         randomColumn =getRandomInt(10)  //random column number
         randomRowValue=Object.keys(enemyBoard1)[randomRowNum] //a random number between 0 and 10 introduces index string value in randomRowValue (i.e index A)
-        //bucle that either damages a ship or changes to water, modifying the board, using the random values generated for the shot to change that precise picture in the matrix
+        MIXTURE= randomRowValue+randomColumn   //HACER ARRAY DE CONCATENACIONES PARA NUNCA DISPARAR AL MISMO SITIO Y GUARDAR EN CADA JUGADOR PARA QUE CADA JUGADOR PUEDA DISPARAR DISTINTO
+        this.shotPositions.push(MIXTURE)//INDICO A DONDE HE TIRADO
+        console.log("SHOTPOSITIONS 0 VALE "+this.shotPositions[0])// METO SHOT POSITION EN ARRAY PARA NO REPETIR ESE DISPARO
+        console.log("PINTO LA CONCATENACION "+MIXTURE)
         console.log(this.name+" own board")
         console.log("---------------------------------------------------------------------------------------")
         console.table(this.ownBoard.array)
         console.log("I shot "+ randomRowValue+ " "+randomColumn) //indicates row and column where player shots
-        for(let index in enemyBoard1){
+        this.shots--
+        console.log("SHOTS REMAINING "+this.shots)
+        for(let index in enemyBoard1){ //bucle that either damages a ship or changes to water, modifying the board, using the random values generated for the shot to change that precise picture in the matrix
             if(index==randomRowValue){  //if index in the array is equal to the random index we generated and the column is equal to our randomly generated one, we change matrix picture
                 for(let j=0;j<COLUMNS;j++){
                     if(j==randomColumn){
@@ -179,7 +188,6 @@ class player {
                  }
             }   
         }
-        this.shots--
         console.log(this.name+" enemy board")
         console.table(this.enemyBoard.array)
     }
@@ -342,7 +350,7 @@ function shot (enemyBoard1,enemyBoard2) {
 
     //shot(player2.ownBoard.array)
     let i = 0
-    while(i<100){
+    while(i<4){
         player1.shot(player2.ownBoard.array,player1.enemyBoard.array)
         player2.shot(player1.ownBoard.array,player2.enemyBoard.array)
         i++
