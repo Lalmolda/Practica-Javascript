@@ -135,22 +135,27 @@ class player {
         this.motorboat3 = new boat("motorBoat",1,1)
 
     }
-
+    //method that shots and modifies the board
     shot(enemyBoard1,enemyBoard2){
-        console.log("SOY EL METODO SHOT")
+        let shipDamaged =false //becomes true if we damage a ship in other player's own board, so we can also indicate we damaged a ship in our enemy board.
         let randomColumn 
         let randomRowNum
-        randomRowNum =getRandomInt(10)
-        randomColumn =getRandomInt(10)
-        randomRowValue=Object.keys(enemyBoard1)[randomRowNum]
-        console.log("DISPARO A "+ randomRowValue+ " "+randomColumn)
+        randomRowNum =getRandomInt(10) //random row number
+        randomColumn =getRandomInt(10)  //random column number
+        randomRowValue=Object.keys(enemyBoard1)[randomRowNum] //a random number between 0 and 10 introduces index string value in randomRowValue (i.e index A)
+        //bucle that either damages a ship or changes to water, modifying the board, using the random values generated for the shot to change that precise picture in the matrix
+        console.log(this.name+" own board")
+        console.log("---------------------------------------------------------------------------------------")
+        console.table(this.ownBoard.array)
+        console.log("I shot "+ randomRowValue+ " "+randomColumn) //indicates row and column where player shots
         for(let index in enemyBoard1){
-            if(index==randomRowValue){
+            if(index==randomRowValue){  //if index in the array is equal to the random index we generated and the column is equal to our randomly generated one, we change matrix picture
                 for(let j=0;j<COLUMNS;j++){
                     if(j==randomColumn){
                         if(enemyBoard1[index][j]!='  '){
                             console.log("You damaged a ship!!") 
                             enemyBoard1[index][j]=DAMAGED
+                            shipDamaged=true
                          }else{
                              console.log("Water!!")
                              enemyBoard1[index][j]=WATER
@@ -159,28 +164,24 @@ class player {
                 }
             }
         }
-        console.table(enemyBoard1)
-    
 
         for(let index in enemyBoard2){
             if(index==randomRowValue){
                 for(let j=0;j<COLUMNS;j++){
                     if(j==randomColumn){
-                        if(enemyBoard2[index][j]!='  '){
-                           console.log("You damaged a ship!!") 
+                        if(enemyBoard2[index][j]!='  ' || shipDamaged==true){
                            enemyBoard2[index][j]=DAMAGED
                         }
                         else{
-                            console.log("Water!!")
                             enemyBoard2[index][j]=WATER
                         }
                     }
                  }
             }   
         }
-        console.table(enemyBoard2)
         this.shots--
-        console.log("AL "+this.name+" le quedan "+this.shots+" disparos")
+        console.log(this.name+" enemy board")
+        console.table(this.enemyBoard.array)
     }
 } 
 
@@ -340,8 +341,12 @@ function shot (enemyBoard1,enemyBoard2) {
     console.log("-------------------------------")
 
     //shot(player2.ownBoard.array)
-    player1.shot(player2.ownBoard.array,player1.enemyBoard.array)
-    player2.shot(player1.ownBoard.array,player2.enemyBoard.array)
+    let i = 0
+    while(i<100){
+        player1.shot(player2.ownBoard.array,player1.enemyBoard.array)
+        player2.shot(player1.ownBoard.array,player2.enemyBoard.array)
+        i++
+    }
     //console.log(Object.keys(player1.ownBoard.array)[1])  //gets index on string format.
     //console.log(player1.ownBoard.array.B[0])  //gets array info, to shot.
     //console.log("CARRIER DEL JUGADOR 1 ESTA EN INDEX "+Object.keys(player1.carrier.positionIndex)[0]+ " Y COLUMNA "+player1.carrier.positionColumn[0]) //way to shot and test where boats are located
