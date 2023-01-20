@@ -11,10 +11,10 @@
 //✔DONE MOSTRAR EN QUE RONDA ESTAMOS POR Y QUE JUGADOR ESTÁ JUGANDO.
 //✔DONE FUNCIÓN DISPARO (NO PODER DISPARAR EN LA MISMA CASILLA DOS VECES), FUNCIÓN PARA MOSTRAR AGUA O TOCADO EN EL ENEMY BOARD.Cada disparo, mostrará la casilla seleccionada, los disparos le faltan al jugador X.
 //✔DONE si en cambio da a una nave del oponente, será entonces “Tocado”. Si además no quedan más casillas de esa nave “tocadas”, deberá mostrarse “Hundido”.
-//DONE CADA JUGADOR PODRÁ SEGUIR DISPARANDO DURANTE EL MISMO TURNO HASTA QUE FALLE (AGUA).
+//✔DONE CADA JUGADOR PODRÁ SEGUIR DISPARANDO DURANTE EL MISMO TURNO HASTA QUE FALLE (AGUA).
 //✔DONE --> y los tableros del jugador que está disparando (el propio y el ajeno) con la casilla ya marcada, sea agua o tocado.
-//TODO El juego terminará cuando no haya más disparos o bien cuando uno de los dos jugadores haya hundido toda la flota contrincante.
-//TODO CUANDO TERMINE, MOSTRAR JUGADOR GANADOR.
+//✔DONE El juego terminará cuando no haya más disparos o bien cuando uno de los dos jugadores haya hundido toda la flota contrincante.
+//✔DONE CUANDO TERMINE, MOSTRAR JUGADOR GANADOR.
 //TODO CUANDO TERMINE, MOSTRAR TABLEROS PROPIOS DE JUGADOR 1 Y 2, PARA VER BARCOS QUE QUEDARON POR HUNDIR.
 
 //2 JUGADORES
@@ -236,10 +236,12 @@ class player {
         console.log("TOTAL BARCOS HUNDIDOS "+TOTALSUNKBOATS)
 
         if(player1.currentBoats==0){
+            console.log("GANADOR EN FUNCION SHOT ES "+player2.name)
             player2.winner=true
         }
 
         if(player2.currentBoats==0){
+            console.log("GANADOR EN FUNCION SHOT ES "+player1.name)
             player1.winner=true
         }
         if(shotAgain==true && (player1.winner==false && player2.winner==false)){
@@ -375,20 +377,27 @@ function placeBoat (boat, board){ //receives player object with both boat and bo
 
     //shot(player2.ownBoard.array)
     let i = 0
-    while((player1.winner==false || player2.currentBoats==false)){
+    while((player1.winner==false && player2.winner==false)){
         console.log("ENTRO EN EL BUCLE Y PLAYER 1 BOATS SON "+player1.currentBoats+ " Y PLAYER 2 BOATS SON "+player2.currentBoats)
         ROUND++
+
+        
         console.log("ROUND "+ROUND+" for "+player1.name)
         console.log("---------------------------------------------------------------------------------------------------------------------------")
         player1.shot(player2.ownBoard.array,player1.enemyBoard.array,player2.boats,player2,player1) //we shoot enemy's board and boats, we change our enemy own board and we change our own enemy board. We send our enemy remaining boats -not sunken-.
+       
         if(player1.winner==true){ //Player2 does not shot if Player1 has already won
             break
         }else{
-            console.log("ROUND "+ROUND+" for "+player2.name)
-            console.log("---------------------------------------------------------------------------------------------------------------------------")
-            player2.shot(player1.ownBoard.array,player2.enemyBoard.array,player1.boats, player1,player2) //we shoot enemy's board and boats, we change our enemy own board and we change our own enemy board. We send our enemy remaining boats -not sunken-.
+            
+                console.log("ROUND "+ROUND+" for "+player2.name)
+                console.log("---------------------------------------------------------------------------------------------------------------------------")
+                player2.shot(player1.ownBoard.array,player2.enemyBoard.array,player1.boats, player1,player2) //we shoot enemy's board and boats, we change our enemy own board and we change our own enemy board. We send our enemy remaining boats -not sunken-.
         }
     }
+
+
+
     console.log(player1.boats[5].position)
     console.log("SE HAN HUNDIDO "+TOTALSUNKBOATS+" BARCOS")
 
@@ -397,6 +406,13 @@ function placeBoat (boat, board){ //receives player object with both boat and bo
     }else{
         console.log(player2.name+ " IS THE WINNER!!!")
     }
+
+    console.log("---------------------------------------------------------------------------------------------------------------------------")
+    console.log("END OF THE GAME, "+player1.name+" BOARD")
+    console.table(player1.ownBoard.array)
+    console.log("END OF THE GAME, "+player2.name+" BOARD")
+    console.table(player2.ownBoard.array)
+
     //console.log(Object.keys(player1.ownBoard.array)[1])  //gets index on string format.
     //console.log(player1.ownBoard.array.B[0])  //gets array info, to shot.
     //console.log("CARRIER DEL JUGADOR 1 ESTA EN INDEX "+Object.keys(player1.carrier.positionIndex)[0]+ " Y COLUMNA "+player1.carrier.positionColumn[0]) //way to shot and test where boats are located
