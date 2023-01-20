@@ -10,7 +10,7 @@
 //✔DONE FRASE QUE INDICA QUE EMPIEZAN LAS RONDAS.
 //✔DONE MOSTRAR EN QUE RONDA ESTAMOS POR Y QUE JUGADOR ESTÁ JUGANDO.
 //✔DONE FUNCIÓN DISPARO (NO PODER DISPARAR EN LA MISMA CASILLA DOS VECES), FUNCIÓN PARA MOSTRAR AGUA O TOCADO EN EL ENEMY BOARD.Cada disparo, mostrará la casilla seleccionada, los disparos le faltan al jugador X.
-//TODO si en cambio da a una nave del oponente, será entonces “Tocado”. Si además no quedan más casillas de esa nave “tocadas”, deberá mostrarse “Hundido”.
+//✔DONE si en cambio da a una nave del oponente, será entonces “Tocado”. Si además no quedan más casillas de esa nave “tocadas”, deberá mostrarse “Hundido”.
 //TODO CADA JUGADOR PODRÁ SEGUIR DISPARANDO DURANTE EL MISMO TURNO HASTA QUE FALLE (AGUA).
 //✔DONE --> y los tableros del jugador que está disparando (el propio y el ajeno) con la casilla ya marcada, sea agua o tocado.
 //TODO El juego terminará cuando no haya más disparos o bien cuando uno de los dos jugadores haya hundido toda la flota contrincante.
@@ -62,6 +62,7 @@ const WATER = '💧'
 const ROWS = 10
 const COLUMNS = 10
 let ROUND=0
+let TOTALSUNKBOATS=0
 //We build board class
 class board {
     constructor(){
@@ -79,10 +80,7 @@ class board {
           H: ['  ','  ','  ','  ','  ','  ','  ','  ','  ','  '],
           I: ['  ','  ','  ','  ','  ','  ','  ','  ','  ','  '],
           J: ['  ','  ','  ','  ','  ','  ','  ','  ','  ','  '],
-        }
-        //this.player
-        //this.boardtype= BoardType
-    
+        }   
     }
     
 } 
@@ -92,22 +90,21 @@ class boat {
         this.type = type //which type of boat, i.e submarine
         this.size = size //number of boxes in the board
         this.lives = lives //remaining lives
-        this.positionIndex = []
-        this.positionColumn = []
+        this.position = []  //every boat will have an array of positions, e.g [a1,b1,c1]
         this.boatPicture = ''
-        if(type=='carrier'){
+        if(type=='Carrier'){
             this.boatPicture=CARRIER
         }
-        if(type=='vessel'){
+        if(type=='Vessel'){
             this.boatPicture=VESSEL
         }
-        if(type=='submarine'){
+        if(type=='Submarine'){
             this.boatPicture=SUBMARINE
         }
-        if(type=='cruise'){
+        if(type=='Cruise'){
             this.boatPicture=CRUISE
         }
-        if(type=='motorBoat'){
+        if(type=='MotorBoat'){
             this.boatPicture=MOTORBOAT
         }
 
@@ -126,22 +123,34 @@ class player {
         this.shotsRemaining=100
         this.shotPositions = []
 
-        this.boatPositionsArray = [] //crear vector de objetos de todos los barcos para ir comprobando sus posiciones y si están hundidos
+        this.boats = [] //crear vector de objetos de todos los barcos para ir comprobando sus posiciones y si están hundidos
 
-        this.carrier = new boat("carrier",5,5)
-        this.vessel = new boat("vessel",4,4)
-        this.submarine1 = new boat("submarine",3,3)
-        this.submarine2 = new boat("submarine",3,3)
-        this.cruise1 = new boat("cruise",2,2)
-        this.cruise2 = new boat("cruise",2,2)
-        this.cruise3 = new boat("cruise",2,2)
-        this.motorboat1 = new boat("motorBoat",1,1)
-        this.motorboat2 = new boat("motorBoat",1,1)
-        this.motorboat3 = new boat("motorBoat",1,1)
+        this.carrier = new boat("Carrier",5,5)
+        this.vessel = new boat("Vessel",4,4)
+        this.submarine1 = new boat("Submarine",3,3)
+        this.submarine2 = new boat("Submarine",3,3)
+        this.cruise1 = new boat("Cruise",2,2)
+        this.cruise2 = new boat("Cruise",2,2)
+        this.cruise3 = new boat("Cruise",2,2)
+        this.motorboat1 = new boat("MotorBoat",1,1)
+        this.motorboat2 = new boat("MotorBoat",1,1)
+        this.motorboat3 = new boat("MotorBoat",1,1)
+
+        //Every player will create an arry of boat objects, so we can understand access their properties like lives, position, etc.
+        this.boats[0]=this.carrier
+        this.boats[1]=this.vessel
+        this.boats[2]=this.submarine1
+        this.boats[3]=this.submarine2
+        this.boats[4]=this.cruise1
+        this.boats[5]=this.cruise2
+        this.boats[6]=this.cruise3
+        this.boats[7]=this.motorboat1
+        this.boats[8]=this.motorboat2
+        this.boats[9]=this.motorboat3
 
     }
     //method that shots and modifies the board
-    shot(enemyBoard1,enemyBoard2){
+    shot(enemyBoard1,enemyBoard2,enemyBoats){
         let shipDamaged =false //becomes true if we damage a ship in other player's own board, so we can also indicate we damaged a ship in our enemy board.
         let randomColumn 
         let randomRowNum
@@ -199,6 +208,21 @@ class player {
                  }
             }   
         }
+
+        for(let index in enemyBoats){
+            for(let j=0;j<10;j++){
+                if(shot==enemyBoats[index].position[j]){
+                    enemyBoats[index].lives--
+                    if(enemyBoats[index].lives==0){
+                        console.log("You have sunk a "+enemyBoats[index].type+" !")
+                        TOTALSUNKBOATS++
+                    }
+
+                }
+            }
+            
+        }
+
         console.log("OWN BOARD")
         console.table(this.ownBoard.array)
         console.log("ENEMY BOARD")
@@ -209,16 +233,15 @@ class player {
 //returns a random number which equals the parameter max-1 (if its 8, it will generate random numbers between 0 and 7)
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
-  }
+}
 
 
 
 //Places boats on the board
 function placeBoat (boat, board){ //receives player object with both boat and board.
-    //place carrier in board
     let randomRowNum
     let randomColumn  
-    let horizontalOrVertical
+    let horizontalOrVertical //0 is vertical, 1 horizontal
     let sizeBoat=boat.size //to avoid size becoming 0, as it will be used as a counter, we save size value in sizeBoat and viceversa.
     let retry=1
     horizontalOrVertical=getRandomInt(2)
@@ -231,7 +254,7 @@ function placeBoat (boat, board){ //receives player object with both boat and bo
             for(let index in board){//Bucle that checks that the next X vector components are equal to '  '(empty), where X is the size of the boat.
                 if(sizeBoat>0){
                     if(board[index][randomColumn]!='  '){
-                        retry++ //if there is only one boat in the same cell of the matriz, it is counted and bucle repeats.
+                        retry++ //if there is only one boat in the same cell of the matrix, it is counted and bucle repeats.
                     }
                 }
             sizeBoat--
@@ -242,12 +265,8 @@ function placeBoat (boat, board){ //receives player object with both boat and bo
         for(let index in board){
             if(sizeBoat>0){//if there are still missing parts to print of the boat size, sizeBoat will be >0
                     board[index][randomColumn]=boat.boatPicture
-                    boat.positionIndex[index]=index
-                    boat.positionColumn[randomColumn]=randomColumn
-                    console.log("METO A BARCO INDEX "+index)
-                    console.log("METO A BARCO Column "+randomColumn)
-                    console.log("BOAT POSITION INDEX "+boat.positionIndex[index])
-                    console.log("BOAT POSITION COLUMN "+boat.positionColumn[randomColumn])
+                    let position=index+randomColumn
+                    boat.position.push(position) //we push the boat coordinates to the position array inside boat class
                 }else{//if size is 0, the boat placement has concluded
                     sizeBoat=boat.size//we reset sizeBoat size to the correct one
                     break;
@@ -278,12 +297,8 @@ function placeBoat (boat, board){ //receives player object with both boat and bo
                 for(let j= 0;j<sizeBoat;j++){//we print as many parts of the boat as the size of the boat
                     if(board[index][j]=='  '){  
                         board[index][j]=boat.boatPicture
-                        boat.positionIndex[index]=index
-                        boat.positionColumn[j]=j
-                        console.log("METO 2 A BARCO INDEX "+index)
-                        console.log("METO 2 A BARCO Column "+j)
-                        console.log("BOAT 2 POSITION INDEX "+boat.positionIndex[index])
-                        console.log("BOAT 2 POSITION COLUMN "+boat.positionColumn[j]) 
+                        let position=index+j
+                        boat.position.push(position) //we push the boat coordinates to the position array inside boat class
                     }
                 }
             }    
@@ -344,12 +359,14 @@ function placeBoat (boat, board){ //receives player object with both boat and bo
         ROUND++
         console.log("ROUND "+ROUND+" for "+player1.name)
         console.log("-------------------------------")
-        player1.shot(player2.ownBoard.array,player1.enemyBoard.array)
+        player1.shot(player2.ownBoard.array,player1.enemyBoard.array,player2.boats) //we shoot enemy's board and boats
         console.log("ROUND "+ROUND+" for "+player2.name)
         console.log("-------------------------------")
-        player2.shot(player1.ownBoard.array,player2.enemyBoard.array)
+        player2.shot(player1.ownBoard.array,player2.enemyBoard.array,player1.boats)
         i++
     }
+    console.log(player1.boats[5].position)
+    console.log("SE HAN HUNDIDO "+TOTALSUNKBOATS+" BARCOS")
     //console.log(Object.keys(player1.ownBoard.array)[1])  //gets index on string format.
     //console.log(player1.ownBoard.array.B[0])  //gets array info, to shot.
     //console.log("CARRIER DEL JUGADOR 1 ESTA EN INDEX "+Object.keys(player1.carrier.positionIndex)[0]+ " Y COLUMNA "+player1.carrier.positionColumn[0]) //way to shot and test where boats are located
