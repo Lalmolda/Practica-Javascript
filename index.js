@@ -7,12 +7,12 @@
 //✔DONE FUNCIÓN ALEATORIA COLOCAR LAS NAVES EN TABLERO DE JUGADOR A Y B (CREAR OBJETO BARCO Y MARCAR SU POSICION EN LA FUNCIÓN). DEBE DECIDIR SI SE COLOCA HORIZONTAL O VERTICAL, NUNCA DIAGONAL. NO SOLAPAR BARCOS.
 //✔DONE Intentar colocar primero los barcos más grandes primero. Empezar por las mayores hasta llegar a la arenilla.
 //✔DONE TABLERO ENEMIGO DEBE MOSTRARSE COMO VACIO ENTERO AL COMIENZO CON AGUA O TOCADO EN EL DISPARO, SIN BARCOS.
-//TODO FRASE QUE INDICA QUE EMPIEZAN LAS RONDAS.
-//TODO MOSTRAR EN QUE RONDA ESTAMOS POR Y QUE JUGADOR ESTÁ JUGANDO.
+//✔DONE FRASE QUE INDICA QUE EMPIEZAN LAS RONDAS.
+//✔DONE MOSTRAR EN QUE RONDA ESTAMOS POR Y QUE JUGADOR ESTÁ JUGANDO.
 //✔DONE FUNCIÓN DISPARO (NO PODER DISPARAR EN LA MISMA CASILLA DOS VECES), FUNCIÓN PARA MOSTRAR AGUA O TOCADO EN EL ENEMY BOARD.Cada disparo, mostrará la casilla seleccionada, los disparos le faltan al jugador X.
-//TODO si en cambio da a una nave del oponente, seráentonces “Tocado”. Si además no quedan más casillas de esa nave “tocadas”, deberá mostrarse “Hundido”.
+//TODO si en cambio da a una nave del oponente, será entonces “Tocado”. Si además no quedan más casillas de esa nave “tocadas”, deberá mostrarse “Hundido”.
 //TODO CADA JUGADOR PODRÁ SEGUIR DISPARANDO DURANTE EL MISMO TURNO HASTA QUE FALLE (AGUA).
-//TODO --> y los tableros del jugador que está disparando (el propio y el ajeno) con la casilla ya marcada, sea agua o tocado.
+//✔DONE --> y los tableros del jugador que está disparando (el propio y el ajeno) con la casilla ya marcada, sea agua o tocado.
 //TODO El juego terminará cuando no haya más disparos o bien cuando uno de los dos jugadores haya hundido toda la flota contrincante.
 //TODO CUANDO TERMINE, MOSTRAR JUGADOR GANADOR.
 //TODO CUANDO TERMINE, MOSTRAR TABLEROS PROPIOS DE JUGADOR 1 Y 2, PARA VER BARCOS QUE QUEDARON POR HUNDIR.
@@ -61,6 +61,7 @@ const DAMAGED = '🔥'
 const WATER = '💧'
 const ROWS = 10
 const COLUMNS = 10
+let ROUND=0
 //We build board class
 class board {
     constructor(){
@@ -121,7 +122,8 @@ class player {
         this.ownBoard = new board()
         this.enemyBoard = new board()
 
-        this.shots=100
+        this.shots=0
+        this.shotsRemaining=100
         this.shotPositions = []
 
         this.boatPositionsArray = [] //crear vector de objetos de todos los barcos para ir comprobando sus posiciones y si están hundidos
@@ -163,23 +165,19 @@ class player {
 
         this.shotPositions.push(shot)//we save the positions each player has shot to in an array.
         
-        console.log("PINTO LA CONCATENACION "+shot)
-        console.log(this.name+" own board")
-        console.log("---------------------------------------------------------------------------------------")
-        console.table(this.ownBoard.array)
-        console.log("I shot "+shot) //indicates row and column where player shots
-        this.shots--
-        console.log("SHOTS REMAINING "+this.shots)
+        this.shots++
+        this.shotsRemaining--
+        console.log("Shoot "+this.shots+" pointing "+shot+" .Shoots remaining: "+this.shotsRemaining) //indicates row and column where player shots
         for(let index in enemyBoard1){ //bucle that either damages a ship or changes to water, modifying the board, using the random values generated for the shot to change that precise picture in the matrix
             if(index==randomRowValue){  //if index in the array is equal to the random index we generated and the column is equal to our randomly generated one, we change matrix picture
                 for(let j=0;j<COLUMNS;j++){
                     if(j==randomColumn){
                         if(enemyBoard1[index][j]!='  '){
-                            console.log("You damaged a ship!!") 
+                            console.log("You damaged a ship!! "+DAMAGED) 
                             enemyBoard1[index][j]=DAMAGED
                             shipDamaged=true
                          }else{
-                             console.log("Water!!")
+                             console.log("Water!! "+WATER)
                              enemyBoard1[index][j]=WATER
                          }
                     }
@@ -201,7 +199,9 @@ class player {
                  }
             }   
         }
-        console.log(this.name+" enemy board")
+        console.log("OWN BOARD")
+        console.table(this.ownBoard.array)
+        console.log("ENEMY BOARD")
         console.table(this.enemyBoard.array)
     }
 } 
@@ -292,33 +292,10 @@ function placeBoat (boat, board){ //receives player object with both boat and bo
 
 }
 
-/*
-function shot (enemyBoard1,enemyBoard2) {
-    let randomColumn 
-    let randomRowNum
-    randomRowNum =getRandomInt(10)
-    randomColumn =getRandomInt(10)
-    randomRowValue=Object.keys(board)[randomRowNum]
-    console.log("DISPARO A "+ randomRowValue+ " "+randomColumn)
-    for(let index in board){
-        if(index==randomRowValue){
-            for(let j=0;j<COLUMNS;j++){
-                if(j==randomColumn){
-                   board[index][j]=DAMAGED
-                }
-            }
-        }
-    }
-    console.table(board)
-}*/
-
-
-
-
 //we initialize the game
     //console.table(MainBoard.Array)
-    const player1 = new player("player 1")
-    const player2 = new player("player 2")
+    const player1 = new player("JORDI")
+    const player2 = new player("GUILLERMO")
 
     placeBoat(player1.carrier, player1.ownBoard.array)
     placeBoat(player1.vessel, player1.ownBoard.array)
@@ -349,14 +326,14 @@ function shot (enemyBoard1,enemyBoard2) {
     placeBoat(player2.motorboat3, player2.ownBoard.array)
 
     console.log("THE GAME STARTS!")
-    console.log(player1.name +" own board ")
+    console.log(player1.name +"'s own board ")
     console.table(player1.ownBoard.array)
-    console.log(player1.name +" enemy board")
+    console.log(player1.name +"'s enemy board")
     console.table(player1.enemyBoard.array)
 
-    console.log(player2.name +" own board")
+    console.log(player2.name +"'s own board")
     console.table(player2.ownBoard.array)
-    console.log(player2.name +" enemy board")
+    console.log(player2.name +"'s enemy board")
     console.table(player2.enemyBoard.array)
 
     console.log("-------------------------------")
@@ -364,7 +341,12 @@ function shot (enemyBoard1,enemyBoard2) {
     //shot(player2.ownBoard.array)
     let i = 0
     while(i<100){
+        ROUND++
+        console.log("ROUND "+ROUND+" for "+player1.name)
+        console.log("-------------------------------")
         player1.shot(player2.ownBoard.array,player1.enemyBoard.array)
+        console.log("ROUND "+ROUND+" for "+player2.name)
+        console.log("-------------------------------")
         player2.shot(player1.ownBoard.array,player2.enemyBoard.array)
         i++
     }
