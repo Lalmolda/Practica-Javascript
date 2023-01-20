@@ -11,7 +11,7 @@
 //✔DONE MOSTRAR EN QUE RONDA ESTAMOS POR Y QUE JUGADOR ESTÁ JUGANDO.
 //✔DONE FUNCIÓN DISPARO (NO PODER DISPARAR EN LA MISMA CASILLA DOS VECES), FUNCIÓN PARA MOSTRAR AGUA O TOCADO EN EL ENEMY BOARD.Cada disparo, mostrará la casilla seleccionada, los disparos le faltan al jugador X.
 //✔DONE si en cambio da a una nave del oponente, será entonces “Tocado”. Si además no quedan más casillas de esa nave “tocadas”, deberá mostrarse “Hundido”.
-//TODO CADA JUGADOR PODRÁ SEGUIR DISPARANDO DURANTE EL MISMO TURNO HASTA QUE FALLE (AGUA).
+//DONE CADA JUGADOR PODRÁ SEGUIR DISPARANDO DURANTE EL MISMO TURNO HASTA QUE FALLE (AGUA).
 //✔DONE --> y los tableros del jugador que está disparando (el propio y el ajeno) con la casilla ya marcada, sea agua o tocado.
 //TODO El juego terminará cuando no haya más disparos o bien cuando uno de los dos jugadores haya hundido toda la flota contrincante.
 //TODO CUANDO TERMINE, MOSTRAR JUGADOR GANADOR.
@@ -115,9 +115,11 @@ class boat {
 class player {
     constructor(name){
         this.name = name
+        this.winner=false //Is the player the winner
         //Given the fact every player sees 2 boards per run, we create them inside the player object.
         this.ownBoard = new board()
         this.enemyBoard = new board()
+        this.currentBoats=10 //Our remaining boats -not sunken-.
 
         this.shots=0
         this.shotsRemaining=100
@@ -150,14 +152,14 @@ class player {
 
     }
     //method that shots and modifies the board
-    shot(enemyBoard1,enemyBoard2,enemyBoats){
+    shot(enemyBoard1,enemyBoard2,enemyBoats,enemyPlayer,player){
         let shipDamaged =false //becomes true if we damage a ship in other player's own board, so we can also indicate we damaged a ship in our enemy board.
         let randomColumn 
         let randomRowNum
         let shot
-        let changeShot
-        let shotTwice
-        changeShot=true
+        let changeShot=true
+        let sameShot
+        let shotAgain=false
         //Bucle that makes sure we don't shot the same cell twice.
         while(changeShot==true){
             changeShot=false //it is false unless we shot the same cell in the board. If we find we shot the same cell again, changeShot will become true and we will enter the bucle again, shooting somewhere else 
@@ -165,8 +167,8 @@ class player {
             randomColumn =getRandomInt(10)  //random column number
             randomRowValue=Object.keys(enemyBoard1)[randomRowNum]//a random number between 0 and 10 introduces index string value in randomRowValue (i.e index A)
             shot= randomRowValue+randomColumn   //concat to get shot coordinates (e.g. A1)
-            shotTwice=this.shotPositions.filter(shotPosition => shotPosition == shot);//detects if we have already shot the same cell with filter array method and an arrow function
-            if(shotTwice==shot){ //if we shot the same cell, we have to make changeShot=true to do the bucle again and shot somewhere else!
+            sameShot=this.shotPositions.filter(shotPosition => shotPosition == shot);//detects if we have already shot the same cell with filter array method and an arrow function
+            if(sameShot==shot){ //if we shot the same cell, we have to make changeShot=true to do the bucle again and shot somewhere else!
                 changeShot=true
             }
         }
@@ -177,23 +179,25 @@ class player {
         this.shots++
         this.shotsRemaining--
         console.log("Shoot "+this.shots+" pointing "+shot+" .Shoots remaining: "+this.shotsRemaining) //indicates row and column where player shots
+        //This bucle changes the enemy board pictures either to water or damaged. Player 1 changes Player 2 own board and viceversa. The other player's board is used to check if the board cell is empty or has a boat, as we don't see boats in our own enemy board.
         for(let index in enemyBoard1){ //bucle that either damages a ship or changes to water, modifying the board, using the random values generated for the shot to change that precise picture in the matrix
             if(index==randomRowValue){  //if index in the array is equal to the random index we generated and the column is equal to our randomly generated one, we change matrix picture
                 for(let j=0;j<COLUMNS;j++){
                     if(j==randomColumn){
                         if(enemyBoard1[index][j]!='  '){
                             console.log("You damaged a ship!! "+DAMAGED) 
-                            enemyBoard1[index][j]=DAMAGED
-                            shipDamaged=true
+                            enemyBoard1[index][j]=DAMAGED //we change the board cell to damaged if it had a boat
+                            shipDamaged=true //this boolean is true if an enemy ship has been damaged. It is needed to change how the player sees the enemy board, as we can't compare it with empty, we need to compare the other player own board first and get this boolean to be true or false.
+                            shotAgain=true
                          }else{
                              console.log("Water!! "+WATER)
-                             enemyBoard1[index][j]=WATER
+                             enemyBoard1[index][j]=WATER //we change the board cell to water if it only had water
                          }
                     }
                 }
             }
         }
-
+        //This bucle changes how the player sees the enemy board -Player 1 changes how he sees Player 2 enemy board and viceversa-, by just showing either an empty cell, water or damaged, but not showing what kind of boat it has been damaged nor the enemy boats.
         for(let index in enemyBoard2){
             if(index==randomRowValue){
                 for(let j=0;j<COLUMNS;j++){
@@ -216,6 +220,8 @@ class player {
                     if(enemyBoats[index].lives==0){
                         console.log("You have sunk a "+enemyBoats[index].type+" !")
                         TOTALSUNKBOATS++
+                        enemyPlayer.currentBoats--
+                        console.log("AL PLAYER "+enemyPlayer.name+" LE QUEDAN "+enemyPlayer.currentBoats+" barcos")
                     }
 
                 }
@@ -227,6 +233,20 @@ class player {
         console.table(this.ownBoard.array)
         console.log("ENEMY BOARD")
         console.table(this.enemyBoard.array)
+        console.log("TOTAL BARCOS HUNDIDOS "+TOTALSUNKBOATS)
+
+        if(player1.currentBoats==0){
+            player2.winner=true
+        }
+
+        if(player2.currentBoats==0){
+            player1.winner=true
+        }
+        if(shotAgain==true && (player1.winner==false && player2.winner==false)){
+            console.log("PLAYER "+player.name+" SHOOTS AGAIN!!!!")
+            console.log("---------------------------------------------------------------------------------------------------------------------------")
+            this.shot(enemyBoard1,enemyBoard2,enemyBoats,enemyPlayer,player) 
+        }
     }
 } 
 
@@ -351,22 +371,32 @@ function placeBoat (boat, board){ //receives player object with both boat and bo
     console.log(player2.name +"'s enemy board")
     console.table(player2.enemyBoard.array)
 
-    console.log("-------------------------------")
+    console.log("---------------------------------------------------------------------------------------------------------------------------")
 
     //shot(player2.ownBoard.array)
     let i = 0
-    while(i<100){
+    while((player1.winner==false || player2.currentBoats==false)){
+        console.log("ENTRO EN EL BUCLE Y PLAYER 1 BOATS SON "+player1.currentBoats+ " Y PLAYER 2 BOATS SON "+player2.currentBoats)
         ROUND++
         console.log("ROUND "+ROUND+" for "+player1.name)
-        console.log("-------------------------------")
-        player1.shot(player2.ownBoard.array,player1.enemyBoard.array,player2.boats) //we shoot enemy's board and boats
-        console.log("ROUND "+ROUND+" for "+player2.name)
-        console.log("-------------------------------")
-        player2.shot(player1.ownBoard.array,player2.enemyBoard.array,player1.boats)
-        i++
+        console.log("---------------------------------------------------------------------------------------------------------------------------")
+        player1.shot(player2.ownBoard.array,player1.enemyBoard.array,player2.boats,player2,player1) //we shoot enemy's board and boats, we change our enemy own board and we change our own enemy board. We send our enemy remaining boats -not sunken-.
+        if(player1.winner==true){ //Player2 does not shot if Player1 has already won
+            break
+        }else{
+            console.log("ROUND "+ROUND+" for "+player2.name)
+            console.log("---------------------------------------------------------------------------------------------------------------------------")
+            player2.shot(player1.ownBoard.array,player2.enemyBoard.array,player1.boats, player1,player2) //we shoot enemy's board and boats, we change our enemy own board and we change our own enemy board. We send our enemy remaining boats -not sunken-.
+        }
     }
     console.log(player1.boats[5].position)
     console.log("SE HAN HUNDIDO "+TOTALSUNKBOATS+" BARCOS")
+
+    if(player1.winner==true){
+        console.log(player1.name+ " IS THE WINNER!!!")
+    }else{
+        console.log(player2.name+ " IS THE WINNER!!!")
+    }
     //console.log(Object.keys(player1.ownBoard.array)[1])  //gets index on string format.
     //console.log(player1.ownBoard.array.B[0])  //gets array info, to shot.
     //console.log("CARRIER DEL JUGADOR 1 ESTA EN INDEX "+Object.keys(player1.carrier.positionIndex)[0]+ " Y COLUMNA "+player1.carrier.positionColumn[0]) //way to shot and test where boats are located
