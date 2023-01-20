@@ -9,7 +9,7 @@
 //✔DONE TABLERO ENEMIGO DEBE MOSTRARSE COMO VACIO ENTERO AL COMIENZO CON AGUA O TOCADO EN EL DISPARO, SIN BARCOS.
 //TODO FRASE QUE INDICA QUE EMPIEZAN LAS RONDAS.
 //TODO MOSTRAR EN QUE RONDA ESTAMOS POR Y QUE JUGADOR ESTÁ JUGANDO.
-//TODO FUNCIÓN DISPARO (NO PODER DISPARAR EN LA MISMA CASILLA DOS VECES), FUNCIÓN PARA MOSTRAR AGUA O TOCADO EN EL ENEMY BOARD.Cada disparo, mostrará la casilla seleccionada, los disparos le faltan al jugador X.
+//✔DONE FUNCIÓN DISPARO (NO PODER DISPARAR EN LA MISMA CASILLA DOS VECES), FUNCIÓN PARA MOSTRAR AGUA O TOCADO EN EL ENEMY BOARD.Cada disparo, mostrará la casilla seleccionada, los disparos le faltan al jugador X.
 //TODO si en cambio da a una nave del oponente, seráentonces “Tocado”. Si además no quedan más casillas de esa nave “tocadas”, deberá mostrarse “Hundido”.
 //TODO CADA JUGADOR PODRÁ SEGUIR DISPARANDO DURANTE EL MISMO TURNO HASTA QUE FALLE (AGUA).
 //TODO --> y los tableros del jugador que está disparando (el propio y el ajeno) con la casilla ya marcada, sea agua o tocado.
@@ -143,18 +143,31 @@ class player {
         let shipDamaged =false //becomes true if we damage a ship in other player's own board, so we can also indicate we damaged a ship in our enemy board.
         let randomColumn 
         let randomRowNum
-        let MIXTURE
-        randomRowNum =getRandomInt(10) //random row number
-        randomColumn =getRandomInt(10)  //random column number
-        randomRowValue=Object.keys(enemyBoard1)[randomRowNum] //a random number between 0 and 10 introduces index string value in randomRowValue (i.e index A)
-        MIXTURE= randomRowValue+randomColumn   //HACER ARRAY DE CONCATENACIONES PARA NUNCA DISPARAR AL MISMO SITIO Y GUARDAR EN CADA JUGADOR PARA QUE CADA JUGADOR PUEDA DISPARAR DISTINTO
-        this.shotPositions.push(MIXTURE)//INDICO A DONDE HE TIRADO
-        console.log("SHOTPOSITIONS 0 VALE "+this.shotPositions[0])// METO SHOT POSITION EN ARRAY PARA NO REPETIR ESE DISPARO
-        console.log("PINTO LA CONCATENACION "+MIXTURE)
+        let shot
+        let changeShot
+        let shotTwice
+        changeShot=true
+        //Bucle that makes sure we don't shot the same cell twice.
+        while(changeShot==true){
+            changeShot=false //it is false unless we shot the same cell in the board. If we find we shot the same cell again, changeShot will become true and we will enter the bucle again, shooting somewhere else 
+            randomRowNum =getRandomInt(10) //random row number
+            randomColumn =getRandomInt(10)  //random column number
+            randomRowValue=Object.keys(enemyBoard1)[randomRowNum]//a random number between 0 and 10 introduces index string value in randomRowValue (i.e index A)
+            shot= randomRowValue+randomColumn   //concat to get shot coordinates (e.g. A1)
+            shotTwice=this.shotPositions.filter(shotPosition => shotPosition == shot);//detects if we have already shot the same cell with filter array method and an arrow function
+            if(shotTwice==shot){ //if we shot the same cell, we have to make changeShot=true to do the bucle again and shot somewhere else!
+                changeShot=true
+            }
+        }
+
+
+        this.shotPositions.push(shot)//we save the positions each player has shot to in an array.
+        
+        console.log("PINTO LA CONCATENACION "+shot)
         console.log(this.name+" own board")
         console.log("---------------------------------------------------------------------------------------")
         console.table(this.ownBoard.array)
-        console.log("I shot "+ randomRowValue+ " "+randomColumn) //indicates row and column where player shots
+        console.log("I shot "+shot) //indicates row and column where player shots
         this.shots--
         console.log("SHOTS REMAINING "+this.shots)
         for(let index in enemyBoard1){ //bucle that either damages a ship or changes to water, modifying the board, using the random values generated for the shot to change that precise picture in the matrix
@@ -350,7 +363,7 @@ function shot (enemyBoard1,enemyBoard2) {
 
     //shot(player2.ownBoard.array)
     let i = 0
-    while(i<4){
+    while(i<100){
         player1.shot(player2.ownBoard.array,player1.enemyBoard.array)
         player2.shot(player1.ownBoard.array,player2.enemyBoard.array)
         i++
